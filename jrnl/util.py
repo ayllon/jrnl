@@ -20,11 +20,9 @@ if "win32" in sys.platform:
     colorama.init()
 
 try:
-    import pygments
-    import pygments.lexers
-    import pygments.formatters
+    import mdv
 except ImportError:
-    pygments = None
+    mdv = None
 
 log = logging.getLogger(__name__)
 
@@ -239,15 +237,8 @@ def highlight_tags_with_background_color(entry, text, color, is_title=False):
                 yield (colorize(part, config["colors"]["tags"], bold=True), part)
 
     config = entry.journal.config
-    if config.get("pygments", False) and not is_title and pygments: # use pygments to do syntax highligh
-        lexer = pygments.lexers.get_lexer_for_filename(entry.journal.config["journal"])
-        formatter_cfg = entry.journal.config["pygments"].get("formatter", "terminal256")
-        formatter_args = formatter_cfg.split()
-        formatter = pygments.formatters.get_formatter_by_name(
-            formatter_args[0],
-            **dict([s.split('=', 1) for s in formatter_args[1:]])
-        )
-        return pygments.highlight(text, lexer, formatter)
+    if config["mdv"] and not is_title and mdv:
+        return mdv.main(text, theme=config["mdv"])
     elif config["highlight"]:  # highlight tags
         text_fragments = re.split(entry.tag_regex(config["tagsymbols"]), text)
 
