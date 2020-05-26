@@ -35,6 +35,7 @@ class Journal:
             "highlight": True,
             "linewrap": 80,
             "indent_character": "|",
+            "use_pygments": False,
         }
         self.config.update(kwargs)
         # Set up date parser
