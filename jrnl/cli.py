@@ -23,6 +23,7 @@ import argparse
 import logging
 import re
 import sys
+from pydoc import pager
 
 import jrnl
 
@@ -419,7 +420,7 @@ def run(manual_args=None):
 
     # Reading mode
     if not mode_compose and not mode_export and not mode_import:
-        print(journal.pprint())
+        pager(journal.pprint())
 
     # Various export modes
     elif args.short:
