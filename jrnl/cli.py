@@ -22,6 +22,7 @@
 import argparse
 import logging
 import re
+import shutil
 import sys
 from pydoc import pager
 
@@ -420,7 +421,15 @@ def run(manual_args=None):
 
     # Reading mode
     if not mode_compose and not mode_export and not mode_import:
-        pager(journal.pprint())
+        term_size = shutil.get_terminal_size()
+        text = journal.pprint()
+        nlines = text.count('\n')
+        if text[-1] != '\n':
+            nlines += 1
+        if nlines >= term_size.lines:
+            pager(text)
+        else:
+            print(text)
 
     # Various export modes
     elif args.short:
