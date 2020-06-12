@@ -3,8 +3,6 @@
 from datetime import datetime
 import re
 
-import ansiwrap
-
 from .util import colorize, highlight_tags_with_background_color, split_title
 
 
@@ -89,49 +87,17 @@ class Entry:
 
         if not short and self.journal.config["linewrap"]:
             # Color date / title and bold title
-            title = ansiwrap.fill(
-                date_str
-                + " "
-                + highlight_tags_with_background_color(
+            title = date_str + " " +\
+                highlight_tags_with_background_color(
                     self,
                     self.title,
                     self.journal.config["colors"]["title"],
                     is_title=True,
-                ),
-                self.journal.config["linewrap"],
-            )
+                    cols=self.journal.config["linewrap"] - len(date_str)
+                )
             body = highlight_tags_with_background_color(
                 self, self.body.rstrip(" \n"), self.journal.config["colors"]["body"]
-            )
-            body_text = [
-                colorize(
-                    ansiwrap.fill(
-                        line,
-                        self.journal.config["linewrap"],
-                        initial_indent=indent,
-                        subsequent_indent=indent,
-                        drop_whitespace=True,
-                    ),
-                    self.journal.config["colors"]["body"],
-                )
-                or indent
-                for line in body.rstrip(" \n").splitlines()
-            ]
-
-            # ansiwrap doesn't handle lines with only the "\n" character and some
-            # ANSI escapes properly, so we have this hack here to make sure the
-            # beginning of each line has the indent character and it's colored
-            # properly. textwrap doesn't have this issue, however, it doesn't wrap
-            # the strings properly as it counts ANSI escapes as literal characters.
-            # TL;DR: I'm sorry.
-            body = "\n".join(
-                [
-                    colorize(indent, self.journal.config["colors"]["body"]) + line
-                    if not ansiwrap.strip_color(line).startswith(indent)
-                    else line
-                    for line in body_text
-                ]
-            )
+            ).rstrip("\n ")
         else:
             title = (
                 date_str

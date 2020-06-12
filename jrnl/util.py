@@ -213,7 +213,7 @@ def colorize(string, color, bold=False):
         return colorama.Style.BRIGHT + color_escape + string + colorama.Style.RESET_ALL
 
 
-def highlight_tags_with_background_color(entry, text, color, is_title=False):
+def highlight_tags_with_background_color(entry, text, color, is_title=False, cols=None):
     """
     Takes a string and colorizes the tags in it based upon the config value for
     color.tags, while colorizing the rest of the text based on `color`.
@@ -238,7 +238,7 @@ def highlight_tags_with_background_color(entry, text, color, is_title=False):
 
     config = entry.journal.config
     if config["mdv"] and not is_title and mdv:
-        return mdv.main(text, theme=config["mdv"])
+        return mdv.main(text, theme=config["mdv"], cols=cols)
     elif config["highlight"]:  # highlight tags
         text_fragments = re.split(entry.tag_regex(config["tagsymbols"]), text)
 
